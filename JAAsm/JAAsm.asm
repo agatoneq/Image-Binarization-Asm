@@ -1,20 +1,31 @@
 .code
-binarization PROC
-;rcx to maciez mno¿ników
-;rdx to macierz pikseli
-;r8 to macierz wynikowa
-mov rax, 0
-	tabele_loop:
-		movupd xmm0, [rdx+rax*8]
-		movupd xmm1, [rcx+rax*8]
-		mulpd xmm0, xmm1
-		movupd [r8+rax*8], xmm0
-		inc rax
-		cmp rax, 3
-		je done
-		jmp tabele_loop
-	done:
-		ret
+    binarization PROC
+;RCX = wskaŸnik do oryginalnej bitmapy
+;RDX = wskaŸnik do wynikowej bitmapy
+;r8 = tablica mno¿ników
+;r9 = rozmiar w bajtach
 
-binarization ENDP
+	    mov r10, 0		                                ; index ustwiwamy na 0
+        mov r11, 0                                      ; licznik pikseli do 3    
+
+    mainLoop:
+
+
+        mov al, byte ptr [rcx + r10]  
+        mov bl, 3
+        imul bl
+
+
+        mov byte ptr [rdx + r10], al 
+        inc r10
+        dec r9d
+        jnz mainLoop                            
+        ret                                    
+
+    outerState:
+        mov r11, 0
+        jmp mainLoop
+
+
+   binarization endp
 end
