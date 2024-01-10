@@ -1,6 +1,6 @@
 ﻿namespace Binarization
 {
-    partial class Form1
+    partial class FormBinarization
     {
         /// <summary>
         /// Wymagana zmienna projektanta.
@@ -78,7 +78,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 263);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(26, 16);
+            this.label1.Size = new System.Drawing.Size(29, 17);
             this.label1.TabIndex = 4;
             this.label1.Text = "C#:";
             // 
@@ -87,7 +87,7 @@
             this.asmTime.AutoSize = true;
             this.asmTime.Location = new System.Drawing.Point(13, 373);
             this.asmTime.Name = "asmTime";
-            this.asmTime.Size = new System.Drawing.Size(38, 16);
+            this.asmTime.Size = new System.Drawing.Size(39, 17);
             this.asmTime.TabIndex = 5;
             this.asmTime.Text = "Time";
             // 
@@ -96,7 +96,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(13, 238);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(107, 16);
+            this.label3.Size = new System.Drawing.Size(113, 17);
             this.label3.TabIndex = 6;
             this.label3.Text = "Czas wykonania:";
             // 
@@ -105,7 +105,7 @@
             this.CTime.AutoSize = true;
             this.CTime.Location = new System.Drawing.Point(13, 291);
             this.CTime.Name = "CTime";
-            this.CTime.Size = new System.Drawing.Size(38, 16);
+            this.CTime.Size = new System.Drawing.Size(39, 17);
             this.CTime.TabIndex = 7;
             this.CTime.Text = "Time";
             // 
@@ -124,7 +124,7 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(13, 77);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(121, 16);
+            this.label6.Size = new System.Drawing.Size(127, 17);
             this.label6.TabIndex = 12;
             this.label6.Text = "Wybierz bibliotekę:";
             // 
@@ -159,7 +159,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(13, 331);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(37, 16);
+            this.label2.Size = new System.Drawing.Size(39, 17);
             this.label2.TabIndex = 13;
             this.label2.Text = "Asm:";
             // 
@@ -189,15 +189,15 @@
             this.initialPicture.TabIndex = 11;
             this.initialPicture.TabStop = false;
             // 
-            // Form1
+            // FormBinarization
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1451, 651);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Name = "Form1";
-            this.Text = "h";
+            this.Name = "FormBinarization";
+            this.Text = "Binarization";
             ((System.ComponentModel.ISupportInitialize)(this.thresholdTrackBar)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

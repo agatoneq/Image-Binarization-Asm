@@ -15,10 +15,10 @@ using System.Runtime.InteropServices;
 
 namespace Binarization
 {
-    public partial class Form1 : Form
+    public partial class FormBinarization : Form
     {
         [DllImport(@"C:\Users\agata\source\repos\JA_Binarization\Binarization\x64\Debug\JAAsm.dll")]
-        public static extern void binarization(IntPtr ptrScanForCurBitmap, IntPtr ptrScanForFinalBitmap, double[] mm0, int size);
+        public static extern void binarization(IntPtr ptrScanForCurBitmap, IntPtr ptrScanForFinalBitmap, int[] mm0, int size);
 
         
 
@@ -26,7 +26,7 @@ namespace Binarization
         // This is a bitmap object.
         private System.Drawing.Bitmap curBitmap;
 
-        public Form1()
+        public FormBinarization()
         {
             InitializeComponent();
         }
@@ -87,71 +87,131 @@ namespace Binarization
             if (curBitmap != null)
             {
 
-                /*
-                                // Tworzenie nowego obiektu Bitmap do przechowywania zbinaryzowanego obrazu
-                                Bitmap binaryBitmap = new Bitmap(curBitmap.Width, curBitmap.Height);
+                   /* // Red
+                    int iR = 0;
+                    // Green
+                    int iG = 0;
+                    // Blue
+                    int iB = 0;
 
-                                // Iteracja po każdym pikselu obrazu
-                                for (int i = 0; i < curBitmap.Width; i++)
-                                {
-                                    for (int j = 0; j < curBitmap.Height; j++)
-                                    {
-                                        // Pobierz kolor piksela
-                                        Color pixelColor = curBitmap.GetPixel(i, j);
+                    // Lock the bitmap's bits.  
+                    Rectangle rect = new Rectangle(0, 0, curBitmap.Width, curBitmap.Height);
+                    System.Drawing.Imaging.BitmapData bmpData =
+                        curBitmap.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
+                        curBitmap.PixelFormat);
 
-                                        // Przekształć na odcień szarości
-                                        int grayValue = (int)(pixelColor.R * 0.3 + pixelColor.G * 0.59 + pixelColor.B * 0.11);
+                    // Get the address of the first line.
+                    IntPtr ptr = bmpData.Scan0;
 
-                                        // Binaryzacja - jeśli wartość szarości przekracza próg, ustaw na biały, w przeciwnym razie na czarny
-                                        Color newColor = (grayValue > thresholdTrackBar.Value) ? Color.White : Color.Black;
+                    // Declare an array to hold the bytes of the bitmap.
+                    int bytes = Math.Abs(bmpData.Stride) * curBitmap.Height;
+                    byte[] rgbValues = new byte[bytes];
 
-                                        // Ustaw nowy kolor piksela na nowym obrazie
-                                        binaryBitmap.SetPixel(i, j, newColor);
-                                    }
-                                }
+                    // Copy the RGB values into the array.
+                    System.Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, bytes);
 
-                                // Przypisanie zbinaryzowanego obrazu do PictureBox
-                                finalPicture.Image = binaryBitmap;
-                                finalPicture.SizeMode = PictureBoxSizeMode.Zoom;*/
+                    // Set every third value to 255. A 24bpp bitmap will binarization.  
+                    for (int counter = 0; counter < rgbValues.Length; counter += 3)
+                    {
+                        // Get the red channel
+                        iR = rgbValues[counter + 2];
+                        // Get the green channel
+                        iG = rgbValues[counter + 1];
+                        // Get the blue channel
+                        iB = rgbValues[counter + 0];
+                        // If the gray value more than threshold and then set a white pixel.
+                        if ((iR + iG + iB) / 3 > 100)
+                        {
+                            // White pixel
+                            rgbValues[counter + 2] = 255;
+                            rgbValues[counter + 1] = 255;
+                            rgbValues[counter + 0] = 255;
+                        }
+                        else
+                        {
+                            // Black pixel
+                            rgbValues[counter + 2] = 0;
+                            rgbValues[counter + 1] = 0;
+                            rgbValues[counter + 0] = 0;
+                        }
+                    }
+
+                    // Copy the RGB values back to the bitmap
+                    System.Runtime.InteropServices.Marshal.Copy(rgbValues, 0, ptr, bytes);
+
+                    // Unlock the bits.
+                    curBitmap.UnlockBits(bmpData);
+
+                // Draw the modified image.
+                finalPicture.Image = curBitmap;
+                finalPicture.SizeMode = PictureBoxSizeMode.Zoom;*/
+
+                
+                /*                                // Tworzenie nowego obiektu Bitmap do przechowywania zbinaryzowanego obrazu
+                                                Bitmap binaryBitmap = new Bitmap(curBitmap.Width, curBitmap.Height);
+
+                                                // Iteracja po każdym pikselu obrazu
+                                                for (int i = 0; i < curBitmap.Width; i++)
+                                                {
+                                                    for (int j = 0; j < curBitmap.Height; j++)
+                                                    {
+                                                        // Pobierz kolor piksela
+                                                        Color pixelColor = curBitmap.GetPixel(i, j);
+
+                                                        // Przekształć na odcień szarości
+                                                        int grayValue = (int)(pixelColor.R * 0.3 + pixelColor.G * 0.59 + pixelColor.B * 0.11);
+
+                                                        // Binaryzacja - jeśli wartość szarości przekracza próg, ustaw na biały, w przeciwnym razie na czarny
+                                                        Color newColor = (grayValue > thresholdTrackBar.Value) ? Color.White : Color.Black;
+
+                                                        // Ustaw nowy kolor piksela na nowym obrazie
+                                                        binaryBitmap.SetPixel(i, j, newColor);
+                                                    }
+                                                }
+
+                                                // Przypisanie zbinaryzowanego obrazu do PictureBox
+                                                finalPicture.Image = binaryBitmap;
+                                                finalPicture.SizeMode = PictureBoxSizeMode.Zoom;*/
 
 
 
-              
 
-                Bitmap finalBitmap = new Bitmap(curBitmap.Width, curBitmap.Height);
 
-                // Lock the bitmap's bits.  
-                Rectangle rectOfCurBitmap = new Rectangle(0, 0, finalBitmap.Width, finalBitmap.Height);
-                BitmapData dataOfCurBitmap = curBitmap.LockBits(rectOfCurBitmap, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                int size = Math.Abs(dataOfCurBitmap.Stride) * curBitmap.Height;
-                // Get the address of the first line.
-                IntPtr ptrScanForCurBitmap = dataOfCurBitmap.Scan0;
+                                Bitmap finalBitmap = new Bitmap(curBitmap.Width, curBitmap.Height);
 
-                // Lock the bitmap's bits.  
-                Rectangle rectOffinalBitmap = new Rectangle(0, 0, finalBitmap.Width, finalBitmap.Height);
-                BitmapData dataOffinalBitmap = finalBitmap.LockBits(rectOffinalBitmap, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                // Get the address of the first line.
+                                // Lock the bitmap's bits.  
+                                Rectangle rectOfCurBitmap = new Rectangle(0, 0, finalBitmap.Width, finalBitmap.Height);
+                                BitmapData dataOfCurBitmap = curBitmap.LockBits(rectOfCurBitmap, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                                int size = Math.Abs(dataOfCurBitmap.Stride) * curBitmap.Height;
+                                // Get the address of the first line.
+                                IntPtr ptrScanForCurBitmap = dataOfCurBitmap.Scan0;
 
-                IntPtr ptrScanForFinalBitmap = dataOffinalBitmap.Scan0;
+                                // Lock the bitmap's bits.  
+                                Rectangle rectOffinalBitmap = new Rectangle(0, 0, finalBitmap.Width, finalBitmap.Height);
+                                BitmapData dataOffinalBitmap = finalBitmap.LockBits(rectOffinalBitmap, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                                // Get the address of the first line.
 
-                double[] mm0 = { 0.3, 0.59, 0.11 };
+                                IntPtr ptrScanForFinalBitmap = dataOffinalBitmap.Scan0;
 
-                DateTime startASM = DateTime.Now;
-                binarization(ptrScanForCurBitmap, ptrScanForFinalBitmap, mm0, size);
-                DateTime endASM = DateTime.Now;
-                TimeSpan tsASM = (endASM - startASM);
+                                int[] mm0 = { 11, 59, 30 };
 
-                curBitmap.UnlockBits(dataOfCurBitmap);
-                finalBitmap.UnlockBits(dataOffinalBitmap);
+                                DateTime startASM = DateTime.Now;
+                                binarization(ptrScanForCurBitmap, ptrScanForFinalBitmap, mm0, size);
+                                DateTime endASM = DateTime.Now;
+                                TimeSpan tsASM = (endASM - startASM);
 
-                finalBitmap.Save("C:\\Users\\agata\\OneDrive\\Pulpit\\test\\Result.jpg");
-                // Możemy także wyświetlić wygenerowaną liczbę
+                                curBitmap.UnlockBits(dataOfCurBitmap);
+                                finalBitmap.UnlockBits(dataOffinalBitmap);
 
-                finalPicture.Image = finalBitmap;
-                finalPicture.SizeMode = PictureBoxSizeMode.Zoom;
+                                finalBitmap.Save("C:\\Users\\agata\\OneDrive\\Pulpit\\test\\Result.jpg");
+                                // Możemy także wyświetlić wygenerowaną liczbę
+
+                                finalPicture.Image = finalBitmap;
+                                finalPicture.SizeMode = PictureBoxSizeMode.Zoom;
 
             }
-        
+
+  
 
         }
 
