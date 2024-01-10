@@ -33,7 +33,7 @@
         xor dx, dx                    ; Wyzerowanie rejestru dx
         div cx                        ; Podzielenie zawartoœci akumulatora przez cx
         mov rdx, 0                    ; Wyzerowanie rejestru dx (reszta z dzielenia)
-        cmp al, 200                ; Porównanie zawartoœci al z 128
+        cmp ax, 100            ; Porównanie zawartoœci al z 128
         jg changeToWhite              ; Skok do changeToWhite, jeœli wiêksze
         mov rax, 0                     ; W przeciwnym razie, ustawienie ax na 0
         je outerState                  ; Skok do outerState, jeœli równy 0
