@@ -18,7 +18,7 @@ namespace Binarization
     public partial class FormBinarization : Form
     {
         [DllImport(@"C:\Users\agata\source\repos\JA_Binarization\Binarization\x64\Debug\JAAsm.dll")]
-        public static extern void binarization(IntPtr ptrScanForCurBitmap, IntPtr ptrScanForFinalBitmap, int size);
+        public static extern void binarization(IntPtr ptrScanForCurBitmap, int x, IntPtr ptrScanForFinalBitmap, int size);
 
         
 
@@ -193,10 +193,11 @@ namespace Binarization
 
                                 IntPtr ptrScanForFinalBitmap = dataOffinalBitmap.Scan0;
 
-                                //int[] mm0 = { 11, 59, 30 };
+                //int[] mm0 = { 11, 59, 30 };
+                int x = 0;
 
                                 DateTime startASM = DateTime.Now;
-                                binarization(ptrScanForCurBitmap, ptrScanForFinalBitmap, size);
+                                binarization(ptrScanForCurBitmap, x, ptrScanForFinalBitmap, size);
                                 DateTime endASM = DateTime.Now;
                                 TimeSpan tsASM = (endASM - startASM);
 
