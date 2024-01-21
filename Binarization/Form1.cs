@@ -19,7 +19,7 @@ namespace Binarization
     public partial class FormBinarization : Form
     {
         [DllImport(@"C:\Users\agata\source\repos\JA_Binarization\Binarization\x64\Debug\JAAsm.dll")]
-        public static extern void binarization(IntPtr ptrScanForCurBitmap, int x, IntPtr ptrScanForFinalBitmap, int size);
+        public static extern void binarization(IntPtr ptrScanForFinalBitmap, byte[] tabR, byte[] tabG, byte[] tabB, int size, int threshold);
 
         private string curFileName;
         // This is a bitmap object.
@@ -54,13 +54,13 @@ namespace Binarization
 
                 int thresholdCs = thresholdTrackBarCs.Value;
 
-                    DateTime startCs = DateTime.Now;
-                    BinarizationAlgorithm algorithm = new BinarizationAlgorithm();
-                    algorithm.binarize(ptrScanForCurBitmap, thresholdCs, ptrScanForFinalBitmap, size);
-                    DateTime endCs = DateTime.Now;
-                    TimeSpan timeCs = (endCs - startCs);
-                    CTime.Text = timeCs.ToString();
-                
+                DateTime startCs = DateTime.Now;
+                BinarizationAlgorithm algorithm = new BinarizationAlgorithm();
+                algorithm.binarize(ptrScanForCurBitmap, thresholdCs, ptrScanForFinalBitmap, size);
+                DateTime endCs = DateTime.Now;
+                TimeSpan timeCs = (endCs - startCs);
+                CTime.Text = timeCs.ToString();
+
                 curBitmap.UnlockBits(dataOfCurBitmap);
                 finalBitmap.UnlockBits(dataOffinalBitmap);
 
@@ -74,42 +74,54 @@ namespace Binarization
 
         private void binarizeAsm()
         {
-            if (curBitmap != null)
+            unsafe
             {
-                Bitmap finalBitmap = new Bitmap(curBitmap.Width, curBitmap.Height);
+                if (curBitmap != null)
+                {
+                    Bitmap finalBitmap = new Bitmap(curBitmap.Width, curBitmap.Height);
 
-                // Lock the bitmap's bits.  
-                Rectangle rectOfCurBitmap = new Rectangle(0, 0, finalBitmap.Width, finalBitmap.Height);
-                BitmapData dataOfCurBitmap = curBitmap.LockBits(rectOfCurBitmap, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                int size = Math.Abs(dataOfCurBitmap.Stride) * curBitmap.Height;
-                // Get the address of the first line.
-                IntPtr ptrScanForCurBitmap = dataOfCurBitmap.Scan0;
+                    // Lock the bitmap's bits.
+                    Rectangle rectOfCurBitmap = new Rectangle(0, 0, finalBitmap.Width, finalBitmap.Height);
+                    BitmapData dataOfCurBitmap = curBitmap.LockBits(rectOfCurBitmap, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    int size = Math.Abs(dataOfCurBitmap.Stride) * curBitmap.Height;
+                    // Get the address of the first line.
+                    IntPtr ptrScanForCurBitmap = dataOfCurBitmap.Scan0;
 
-                // Lock the bitmap's bits.  
-                Rectangle rectOffinalBitmap = new Rectangle(0, 0, finalBitmap.Width, finalBitmap.Height);
-                BitmapData dataOffinalBitmap = finalBitmap.LockBits(rectOffinalBitmap, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                // Get the address of the first line.
+                    // Lock the bitmap's bits.
+                    Rectangle rectOffinalBitmap = new Rectangle(0, 0, finalBitmap.Width, finalBitmap.Height);
+                    BitmapData dataOffinalBitmap = finalBitmap.LockBits(rectOffinalBitmap, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    // Get the address of the first line.
+                    IntPtr ptrScanForFinalBitmap = dataOffinalBitmap.Scan0;
 
-                IntPtr ptrScanForFinalBitmap = dataOffinalBitmap.Scan0;
-
-                int thresholdAsm = thresholdTrackBarAsm.Value;
+                    int thresholdAsm = thresholdTrackBarAsm.Value;
 
                     DateTime startAsm = DateTime.Now;
-                    binarization(ptrScanForCurBitmap, thresholdAsm, ptrScanForFinalBitmap, size);
+
+                    byte[] redChannel = new byte[size / 3];
+                    byte[] greenChannel = new byte[size / 3];
+                    byte[] blueChannel = new byte[size / 3];
+
+                    // Splitting the image into RGB channels
+                    Marshal.Copy(ptrScanForCurBitmap, redChannel, 0, size / 3);
+                    Marshal.Copy(ptrScanForCurBitmap + 1, greenChannel, 0, size / 3);
+                    Marshal.Copy(ptrScanForCurBitmap + 2, blueChannel, 0, size / 3);
+
+                    binarization(ptrScanForFinalBitmap, redChannel, greenChannel, blueChannel, size/3, thresholdAsm);
+
                     DateTime endAsm = DateTime.Now;
                     TimeSpan timeAsm = (endAsm - startAsm);
                     asmTime.Text = timeAsm.ToString();
-                
-                curBitmap.UnlockBits(dataOfCurBitmap);
-                finalBitmap.UnlockBits(dataOffinalBitmap);
 
-                finalBitmap.Save("C:\\Users\\agata\\OneDrive\\Pulpit\\test\\result.jpg");
-                // Możemy także wyświetlić wygenerowaną liczbę
+                    curBitmap.UnlockBits(dataOfCurBitmap);
+                    finalBitmap.UnlockBits(dataOffinalBitmap);
 
-                finalPicture.Image = finalBitmap;
-                finalPicture.SizeMode = PictureBoxSizeMode.Zoom;
+                    finalBitmap.Save("C:\\Users\\agata\\OneDrive\\Pulpit\\test\\result.jpg");
+                    finalPicture.Image = finalBitmap;
+                    finalPicture.SizeMode = PictureBoxSizeMode.Zoom;
+                }
             }
         }
+
 
         private void PickImageButton_Click(object sender, EventArgs e)
         {
@@ -133,7 +145,7 @@ namespace Binarization
 
                 // Tutaj możesz wykorzystać ścieżkę do pliku
                 // np. przypisać do TextBox, przekazać do innych funkcji itp.
-               // Binarization binarization = new Binarization(selectedFilePath);
+                // Binarization binarization = new Binarization(selectedFilePath);
                 //binarization.path = selectedFilePath;
                 curFileName = openFileDialog.FileName;
                 var fileStream = openFileDialog.OpenFile();
@@ -194,5 +206,4 @@ namespace Binarization
 
     }
 }
-
 

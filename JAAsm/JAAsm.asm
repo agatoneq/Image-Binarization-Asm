@@ -1,52 +1,53 @@
+.data
+    wektor_3 dd 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0
+
 .code
     binarization PROC
-    ; RCX - oryginalna bitmapa
-    ; RDX - wyzerowany rejestr do dzielenia
-    ; R8 - wynikowa bitmapa
-    ; R9 - rozmiar w bajtach
-    ; R10 - próg binaryzacji
+    ; RCX - wynikowa bitmapa
+    ; RDX - tablica R
+    ; R8 - tablica G
+    ; R9 - tablica B
+    
+    mov r11, [rsp+40]   ; rozmiar/3
+    mov r10, [rsp+48]   ; próg binaryzacji   
+    mov rsi, 0          ; licznik
 
-        mov r10, rdx
-        mov rdx, 0
-        mov r11, 0                          ; Inicjalizacja licznika sumy
-        mov rsi, 0                          ; Inicjalizacja licznika iteracji
-        mov rax, 0                          ; Inicjalizacja akumulatora
-        mov rbx, 0                          ; Inicjalizacja rejestru pomocniczego
-        mov cx, 3                           ; Ustawienie 3
-        mov rdi, 0
-        mov rdi, r9                         ; Przeniesienie rozmiaru do rdi
+    main_loop:
+        ; wczytywanie tablic 128 bitów
+        movdqu xmm0, [rdx+rsi]
+        movdqu xmm1, [r8+rsi]
+        movdqu xmm2, [r9+rsi]
 
-    addValuesLoop:
-        cmp rsi, 3                          
-        je divideAndChangeColor                 
-        cmp r11, rdi                        
-        jae divideAndChangeColor            
-        mov bl, byte ptr [rcx + r11]        
-        inc r11                            
-        add ax, bx                      
-        inc rsi                        
-        jmp addValuesLoop                  
+        ; dodawanie 128b rejestrow
+        paddusb xmm0, xmm1
+        paddusb xmm0, xmm2
 
-    divideAndChangeColor:
-        mov rsi, 0                            
-        div cx                             
-        mov rdx, 0                          
-        cmp ax, r10w                    
-        jg changeToWhite                    
-        mov rax, 0                         
-        je finalLoop                     
+        ; wczytywanie wektora 16-el z trójkami do xmm3
+        movups xmm3, xmmword ptr [wektor_3]
 
-    finalLoop:
-        mov qword ptr [r8 + r11], rax
-        mov rax, 0                               
-        dec r9d                                  
-        jnz addValuesLoop                     
-        ret 
+        ; Podzielenie xmm0 przez xmm3
+        divps xmm0, xmm3
 
-    changeToWhite:                                   
-        mov rax, 0ffffffffffffh                   
-        jmp finalLoop                             
+        ;rozpakowanie progu binaryzacji do xmm4 i zrobienie 16-el wektora
+        movd xmm4, r10
+        punpckldq xmm4, xmm4
+        punpckldq xmm4, xmm4
 
+        ; porówanie wartoœci xmm0 z xmm4 (progiem binaryzacji)
+        cmpltss xmm0, xmm4
+
+        ; zapisanie wyniku binaryzacji do wynikowej bitmapy
+        movaps [rcx + rsi], xmm0
+
+        ; zwiêkszenie indeksu o 16 bajtów
+        add rsi, 16 
+
+        ; sprawdzanie warunku zakoñczenia pêtli
+        cmp rsi, r11
+        jl main_loop
+
+        ; zakoñczenie procedury
+        ret
 
    binarization endp
 end
