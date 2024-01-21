@@ -19,7 +19,7 @@ namespace Binarization
     public partial class FormBinarization : Form
     {
         [DllImport(@"C:\Users\agata\source\repos\JA_Binarization\Binarization\x64\Debug\JAAsm.dll")]
-        public static extern void binarization(IntPtr ptrScanForFinalBitmap, byte[] tabR, byte[] tabG, byte[] tabB, int size, int threshold);
+        public static extern void binarization(IntPtr ptrScanForFinalBitmap, int[] tabR, int[] tabG, int[] tabB, int size, int threshold);
 
         private string curFileName;
         // This is a bitmap object.
@@ -93,26 +93,52 @@ namespace Binarization
                     // Get the address of the first line.
                     IntPtr ptrScanForFinalBitmap = dataOffinalBitmap.Scan0;
 
+                    curBitmap.UnlockBits(dataOfCurBitmap);
+
+
                     int thresholdAsm = thresholdTrackBarAsm.Value;
 
                     DateTime startAsm = DateTime.Now;
 
-                    byte[] redChannel = new byte[size / 3];
-                    byte[] greenChannel = new byte[size / 3];
-                    byte[] blueChannel = new byte[size / 3];
+                    int[] redChannel = new int[size / 3];
+                    int[] greenChannel = new int[size / 3];
+                    int[] blueChannel = new int[size / 3];
 
                     // Splitting the image into RGB channels
-                    Marshal.Copy(ptrScanForCurBitmap, redChannel, 0, size / 3);
-                    Marshal.Copy(ptrScanForCurBitmap + 1, greenChannel, 0, size / 3);
-                    Marshal.Copy(ptrScanForCurBitmap + 2, blueChannel, 0, size / 3);
+                    //Marshal.Copy(ptrScanForCurBitmap, redChannel, 0, size / 3);
+                    //Marshal.Copy(ptrScanForCurBitmap + 2, greenChannel, 0, size / 3);
+                    //Marshal.Copy(ptrScanForCurBitmap + 4, blueChannel, 0, size / 3);
 
-                    binarization(ptrScanForFinalBitmap, redChannel, greenChannel, blueChannel, size/3, thresholdAsm);
+                    int index = 0;
+                    int index2 = 0;
+                    int index3 = 0;
+
+
+                    // Iteruj po pikselach obrazu
+                    for (int y = 0; y < curBitmap.Height; y++)
+                    {
+                        for (int x = 0; x < curBitmap.Width; x++)
+                        {
+                            // Pobierz wartości składowych koloru piksela
+                            Color pixel = curBitmap.GetPixel(x, y);
+
+                            if (index < redChannel.Length)
+                                redChannel[index++] = (int)pixel.R;
+                            if (index2 < greenChannel.Length)
+                                greenChannel[index2++] = (int)pixel.G;
+                            if (index3 < blueChannel.Length)
+                                blueChannel[index3++] = (int)pixel.B;
+
+                        }
+                    }
+
+                    binarization(ptrScanForFinalBitmap, redChannel, greenChannel, blueChannel, size+size/3, thresholdAsm);
 
                     DateTime endAsm = DateTime.Now;
                     TimeSpan timeAsm = (endAsm - startAsm);
                     asmTime.Text = timeAsm.ToString();
 
-                    curBitmap.UnlockBits(dataOfCurBitmap);
+                    //curBitmap.UnlockBits(dataOfCurBitmap);
                     finalBitmap.UnlockBits(dataOffinalBitmap);
 
                     finalBitmap.Save("C:\\Users\\agata\\OneDrive\\Pulpit\\test\\result.jpg");
