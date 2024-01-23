@@ -10,8 +10,8 @@
     
     mov r11, [rsp+40]   ; rozmiar
     mov r10, [rsp+48]   ; próg binaryzacji   
-    mov rsi, 0          ; licznik
-    mov r12, 0 
+    mov rsi, [rsp+56]   ; licznik
+    mov r12, [rsp+64]
     
     ; wczytywanie wektora 4-el z trójkami do xmm3
     movups xmm3, xmmword ptr [wektor_3]

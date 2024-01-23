@@ -12,8 +12,9 @@ namespace Binarization
     public partial class FormBinarization : Form
     {
         [DllImport(@"C:\Users\agata\source\repos\JA_Binarization\Binarization\x64\Debug\JAAsm.dll")]
-        public static extern void binarization(IntPtr ptrScanForFinalBitmap, int[] tabR, int[] tabG, int[] tabB, int size, int threshold);
+        public static extern void binarization(IntPtr ptrScanForFinalBitmap, int[] tabR, int[] tabG, int[] tabB, int size, int threshold, int startPoint, int sizeThreads);
 
+        private int threadsValueInt = 0;
         private string curFileName;
         private System.Drawing.Bitmap curBitmap;
 
@@ -24,6 +25,7 @@ namespace Binarization
             asmValue.Text = thresholdTrackBarAsm.Value.ToString();
             csValue.Text = thresholdTrackBarCs.Value.ToString();
             threadsValue.Text = threadsBar.Value.ToString();
+            threadsValueInt = threadsBar.Value;
         }
 
         private void binarizeCs()
@@ -96,7 +98,6 @@ namespace Binarization
 
                     curBitmap.UnlockBits(dataOfCurBitmap);
 
-
                     int thresholdAsm = thresholdTrackBarAsm.Value;
 
                     DateTime startAsm = DateTime.Now;
@@ -108,7 +109,6 @@ namespace Binarization
                     int index = 0;
                     int index2 = 0;
                     int index3 = 0;
-
 
                     // Iteruj po pikselach obrazu
                     for (int y = 0; y < curBitmap.Height; y++)
@@ -128,7 +128,22 @@ namespace Binarization
                         }
                     }
 
-                    binarization(ptrScanForFinalBitmap, redChannel, greenChannel, blueChannel, size+size/3, thresholdAsm);
+                    ParallelOptions options = new ParallelOptions
+                    {
+                        MaxDegreeOfParallelism = threadsValueInt
+                    };
+
+                    Parallel.For(0, threadsValueInt, options, i =>
+                    {
+                        int analyzedFragment = (size + size / 3) / threadsValueInt;
+
+                        int startPoint = analyzedFragment * i ;
+                        int endPoint = startPoint + analyzedFragment ;
+                        int point = (size / threadsValueInt) * i ;
+
+                        binarization(ptrScanForFinalBitmap, redChannel, greenChannel, blueChannel, endPoint, thresholdAsm, startPoint, point);
+
+                    });
 
                     DateTime endAsm = DateTime.Now;
                     TimeSpan timeAsm = (endAsm - startAsm);
@@ -214,7 +229,7 @@ namespace Binarization
         private void threadsBar_Scroll(object sender, EventArgs e)
         {
             threadsValue.Text = threadsBar.Value.ToString();
-            binarizeCs();
+            threadsValueInt = threadsBar.Value;
         }
     }
 }
