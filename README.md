@@ -17,8 +17,10 @@ Simple GUI for loading images and adjusting binarization settings.
 
 ## Installation
 ### Clone the repository:
+```
 git clone https://github.com/agatoneq/Binarization.git
-<br><br>
+```
+<br>
 
 ## Usage
 Make sure JAAsm.dll is located in the specified path or update the path in the [DllImport] attribute.
