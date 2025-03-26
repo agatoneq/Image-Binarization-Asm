@@ -6,13 +6,13 @@ Supports multiple binary processing backends, including **SIMD-optimized assembl
 Developed as a university project focused on performance comparison between **C#**, **assembly (SIMD)**, and **assembly (non-SIMD)** versions.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/3059bfbc-aba4-4300-8b7a-f4c553973b34"/>
+  <img src="https://github.com/user-attachments/assets/6f11b8a1-7abe-4811-95dd-b8462372c7fc"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/6f11b8a1-7abe-4811-95dd-b8462372c7fc" height="250px"/>
-  <img src="https://github.com/user-attachments/assets/0b3bde28-d259-450c-bd0d-50585449756f" height="250px"/>
-  <img src="https://github.com/user-attachments/assets/a59b7660-5c51-4933-a740-24ddb8330abd" height="250px"/>
+  <img src="https://github.com/user-attachments/assets/3059bfbc-aba4-4300-8b7a-f4c553973b34" height="200px"/>
+  <img src="https://github.com/user-attachments/assets/0b3bde28-d259-450c-bd0d-50585449756f" height="200px"/>
+  <img src="https://github.com/user-attachments/assets/a59b7660-5c51-4933-a740-24ddb8330abd" height="200px"/>
 </p>
 
 
