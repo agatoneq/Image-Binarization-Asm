@@ -1,39 +1,67 @@
-# Binarization
+# 🖼️ Image Binarization with SIMD Assembly and C#
 
-## Description
-This project is a hybrid application written in C# and assembly that performs image binarization. The application utilizes both C# for the graphical user interface and higher-level operations, and assembly for efficient image processing. It supports multi-threading to improve performance on multi-core processors.  
-<br>
+A Windows desktop application for image binarization using thresholding, built in C#.  
+Supports multiple binary processing backends, including **SIMD-optimized assembly routines**, with full multi-threading support.
 
-## Features
-### Image Binarization: 
-Convert images to black and white using a specified threshold.
-### Multi-threading: 
-Take advantage of multiple CPU cores for faster processing.
-### Hybrid Implementation: 
-Leverages the performance of assembly code with the flexibility of C#.
-### User Interface: 
-Simple GUI for loading images and adjusting binarization settings.
-<br><br>
+Developed as a university project focused on performance comparison between **C#**, **assembly (SIMD)**, and **assembly (non-SIMD)** versions.
 
-## Installation
-### Clone the repository:
-```
-git clone https://github.com/agatoneq/Binarization.git
-```
-<br>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3059bfbc-aba4-4300-8b7a-f4c553973b34"/>
+</p>
 
-## Usage
-Make sure JAAsm.dll is located in the specified path or update the path in the [DllImport] attribute.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6f11b8a1-7abe-4811-95dd-b8462372c7fc" height="250px"/>
+  <img src="https://github.com/user-attachments/assets/0b3bde28-d259-450c-bd0d-50585449756f" height="250px"/>
+  <img src="https://github.com/user-attachments/assets/a59b7660-5c51-4933-a740-24ddb8330abd" height="250px"/>
+</p>
 
-### Run the application:
-Launch the application executable from Visual Studio or the build directory.
-### Load an image:
-Click the "Pick Image" button and select an image file.
-### Adjust settings:
-Set the binarization threshold using the trackbars for both C# and assembly implementations.
-Adjust the number of threads using the thread bar.
-### Perform binarization:
-Select either "C#" or "Asm" from the dropdown menu.
-Click the "Confirm" button to binarize the image using the selected method.
-### View and save results:
-The binarized image will be displayed. Save the result if desired.
+
+## 🧠 About the Project
+
+- Load and binarize bitmap images using a dynamic threshold (0–255)
+- Visual preview and side-by-side comparison of results
+- Multiple backends:
+  - C# implementation
+  - Assembly with SIMD (vector instructions)
+  - Assembly without SIMD (educational comparison)
+- Adjustable **thread count** (from 1 to 64)
+- Real-time **execution time measurement** per backend
+- GUI for selecting image and method
+
+
+## 💻 Technologies Used
+
+- C# (Windows Forms)
+- Assembly (x64, SIMD SSE)
+- Dynamic Link Libraries (DLLs)
+- .NET Framework
+- Multi-threading (thread pool)
+- WinForms UI
+
+
+## 📊 Performance
+
+The app was benchmarked using images of different sizes (S, M, L) and varying thread counts.  
+Results show significantly better scaling and performance for the C# version vs assembly under multithreading.  
+SIMD version offered insight into low-level parallel processing, though performance was bottlenecked by instruction overhead.
+
+## 🧑‍💻 Author
+
+**Agata Sobczyk** – designed and implemented the entire system independently
+
+
+## ▶️ How to Run
+
+1. Open the solution in Visual Studio
+2. Make sure `BinarizationAsm.dll` is referenced correctly in `Form1.cs`
+3. Load a test image (BMP, JPG or PNG)
+4. Select processing method (C#, ASM, ASM-NV)
+5. Adjust threshold and number of threads
+6. Click to apply and compare results
+
+> Works best in Release mode. Ensure platform target is set to x64.
+
+
+## 📜 License
+
+Personal project created for educational exploration of low-level image processing.
